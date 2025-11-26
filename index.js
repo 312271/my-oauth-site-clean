@@ -8,22 +8,19 @@ window.onload = () => {
     .then(async (data) => {
       const result = await fetchYandexData(data.access_token);
       authorize(result);
-      console.log(result, data);
     })
     .catch((error) => console.log("Что-то пошло не так:", error));
 };
 
-// Функция для получения данных пользователя от Яндекса
 async function fetchYandexData(token) {
   const response = await fetch('https://login.yandex.ru/info?format=json&oauth_token=' + token);
   return await response.json();
 }
 
-// Функция для изменения состояния страницы (показать "Вы авторизованы")
 function authorize(userData) {
   const button = document.getElementById('authButton');
   if (button) {
-    button.innerText = 'Вы авторизованы.';
+    button.innerText = `Вы авторизованы. Привет, ${userData.first_name}!`;
     button.disabled = true;
   }
 }
