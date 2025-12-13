@@ -1,8 +1,8 @@
-// token.js - получаем токен из URL
+// token.js
 window.onload = function() {
   console.log('Token page loaded');
   
-  // Пытаемся получить токен из URL (после редиректа Яндекс добавит его в #)
+  // Пытаемся получить токен из URL
   const hash = window.location.hash;
   console.log('Hash из URL:', hash);
   
@@ -13,28 +13,49 @@ window.onload = function() {
       const token = tokenMatch[1];
       console.log('✅ Найден токен:', token.substring(0, 20) + '...');
       
-      // Показываем токен на странице
-      document.body.innerHTML += `
-        <h3>Токен получен!</h3>
-        <p>Токен: ${token.substring(0, 30)}...</p>
-        <p>Теперь можно закрыть эту вкладку и вернуться на главную.</p>
+      // Сохраняем токен в localStorage
+      localStorage.setItem('yandex_token', token);
+      console.log('Токен сохранен в localStorage');
+      
+      // Показываем сообщение на 3 секунды, потом редирект
+      document.body.innerHTML = `
+        <div style="text-align: center; margin-top: 50px;">
+          <h2 style="color: green;">✅ Авторизация успешна!</h2>
+          <p>Токен получен и сохранен.</p>
+          <p>Возвращаемся на главную страницу...</p>
+          <div id="countdown">3</div>
+        </div>
       `;
       
-      // Можно отправить токен обратно на главную страницу
-      try {
-        if (window.opener) {
-          window.opener.postMessage({ type: 'yandex_token', token: token }, '*');
-          console.log('Токен отправлен в opener');
+      // Обратный отсчет и редирект
+      let count = 3;
+      const countdownEl = document.getElementById('countdown');
+      const timer = setInterval(() => {
+        count--;
+        if (countdownEl) countdownEl.textContent = count;
+        if (count <= 0) {
+          clearInterval(timer);
+          // Редирект на главную
+          window.location.href = 'https://my-oauth-site-clean.vercel.app/';
         }
-      } catch (e) {
-        console.error('Не удалось отправить токен:', e);
-      }
+      }, 1000);
+      
+      // Можно сразу редиректнуть (без отсчета)
+      // setTimeout(() => {
+      //   window.location.href = 'https://my-oauth-site-clean.vercel.app/';
+      // }, 1000);
+      
     }
   } else {
     console.log('Токен не найден в URL');
-    document.body.innerHTML += `
-      <p style="color: red;">Токен не найден в URL.</p>
-      <p>Закройте эту вкладку и попробуйте снова.</p>
+    document.body.innerHTML = `
+      <div style="text-align: center; margin-top: 50px;">
+        <h2 style="color: red;">❌ Ошибка авторизации</h2>
+        <p>Токен не найден в URL.</p>
+        <button onclick="window.location.href='https://my-oauth-site-clean.vercel.app/'">
+          Вернуться на главную
+        </button>
+      </div>
     `;
   }
 };
