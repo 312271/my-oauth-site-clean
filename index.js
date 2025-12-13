@@ -1,49 +1,71 @@
-document.addEventListener('DOMContentLoaded', () => {
+// Ждем загрузки страницы
+window.addEventListener('load', function() {
+  console.log('Страница загружена');
+  
   const button = document.getElementById('authButton');
+  const logsDiv = document.getElementById('logs');
+  
   if (!button) {
-    console.error('Кнопка authButton не найдена');
+    console.error('Кнопка не найдена');
     return;
   }
-
-  button.addEventListener('click', () => {
-    console.log('Кнопка нажата, инициализация YaAuthSuggest...');
-    
-    // Проверяем, что объект существует
-    if (typeof window.YaAuthSuggest === 'undefined') {
-      console.error('YaAuthSuggest не загружен. Проверьте подключение скрипта в HTML.');
-      alert('Ошибка загрузки SDK Яндекса');
-      return;
+  
+  // Проверяем что есть в window
+  console.log('Доступные объекты Яндекса:');
+  for (let key in window) {
+    if (key.includes('Ya') || key.includes('ya')) {
+      console.log('-', key, ':', typeof window[key]);
     }
-
-    window.YaAuthSuggest.init({
-      client_id: '2ac30da3005b46029619b9c3a7388b26',
-      response_type: 'token',
-      redirect_uri: 'https://my-oauth-site-clean.vercel.app/token.html'
-    }, 'https://my-oauth-site-clean.vercel.app')
-    .then(({ handler }) => {
-      console.log('YaAuthSuggest инициализирован, запускаем handler...');
-      return handler();
-    })
-    .then(async (data) => {
-      console.log('Токен получен:', data);
+  }
+  
+  button.addEventListener('click', function() {
+    console.log('Нажата кнопка');
+    console.log('window.YaAuthSuggest:', window.YaAuthSuggest);
+    
+    // Если SDK загрузился
+    if (window.YaAuthSuggest && typeof window.YaAuthSuggest.init === 'function') {
+      console.log('Используем YaAuthSuggest');
       
-      // Запрашиваем информацию о пользователе
-      const user = await fetch(`https://login.yandex.ru/info?format=json&oauth_token=${data.access_token}`)
-        .then(r => r.json());
+      window.YaAuthSuggest.init(
+        {
+          client_id: '2ac30da3005b46029619b9c3a7388b26',
+          response_type: 'token',
+          redirect_uri: 'https://my-oauth-site-clean.vercel.app/token.html'
+        },
+        'https://my-oauth-site-clean.vercel.app'
+      )
+      .then(function(result) {
+        console.log('Инициализация успешна');
+        return result.handler();
+      })
+      .then(function(data) {
+        console.log('Получен токен:', data);
+        alert('Токен получен! Проверь консоль.');
+      })
+      .catch(function(error) {
+        console.error('Ошибка:', error);
+        alert('Ошибка: ' + error.message);
+      });
       
-      console.log('Данные пользователя:', user);
-      button.innerText = `Привет, ${user.first_name || 'пользователь'}!`;
-      button.disabled = true;
+    } else {
+      console.log('SDK не загружен, делаем прямой редирект');
       
-      // Можно также вывести данные в logs
-      const logsDiv = document.getElementById('logs');
-      if (logsDiv) {
-        logsDiv.innerHTML = `<p>Успешно авторизован: ${user.display_name || user.login}</p>`;
-      }
-    })
-    .catch(err => {
-      console.error('Ошибка авторизации:', err);
-      alert('Не удалось авторизоваться: ' + (err.message || err));
-    });
+      // Прямой OAuth редирект
+      const authUrl = 
+        'https://oauth.yandex.ru/authorize?' +
+        'response_type=token&' +
+        'client_id=2ac30da3005b46029619b9c3a7388b26&' +
+        'redirect_uri=' + encodeURIComponent('https://my-oauth-site-clean.vercel.app/token.html');
+      
+      window.location.href = authUrl;
+    }
   });
+  
+  // Проверка через 2 секунды
+  setTimeout(function() {
+    if (!window.YaAuthSuggest) {
+      console.log('После загрузки: YaAuthSuggest всё еще не доступен');
+      console.log('Используется прямой OAuth редирект');
+    }
+  }, 2000);
 });
