@@ -4,17 +4,15 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>OAuth Яндекс</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <!-- ПРАВИЛЬНЫЙ скрипт для мгновенной авторизации -->
-  <script src="https://yastatic.net/s3/passport-sdk/autofill/v1/sdk-suggest-token-with-polyfills-latest.js"></script>
+  <!-- Для КНОПКИ авторизации (виджет) -->
+  <script src="https://yastatic.net/s3/passport-sdk/autofill/v1/sdk-suggest.js"></script>
   <link rel="stylesheet" href="index.css" />
-  <script type="module" src="index.js"></script>
+  <script src="index.js"></script> <!-- Убрал type="module" -->
 </head>
 <body>
   <div class="buttons">
     <button id="authButton">Войти через Яндекс</button>
   </div>
-  <div class="buttonContainer" id="buttonContainer"></div>
   <div id="logs"></div>
 </body>
 </html>
