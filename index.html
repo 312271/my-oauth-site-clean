@@ -3,16 +3,66 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>OAuth Яндекс</title>
-  <!-- Основной скрипт для виджета -->
-  <script src="https://yastatic.net/s3/passport-sdk/autofill/v1/sdk-suggest-with-polyfills-latest.js"></script>
-  <link rel="stylesheet" href="index.css" />
+  <title>OAuth Яндекс - Авторизация</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .buttons {
+      text-align: center;
+      margin: 40px 0;
+    }
+    #authButton {
+      background: #FFCC00;
+      color: #000;
+      border: none;
+      padding: 15px 30px;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    #authButton:hover {
+      background: #FFD633;
+    }
+    #authButton:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    #logs {
+      margin-top: 30px;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      min-height: 100px;
+    }
+  </style>
   <script src="index.js"></script>
 </head>
 <body>
+  <h1>Демо авторизации через Яндекс</h1>
+  <p>Это демонстрация OAuth 2.0 авторизации через Яндекс ID.</p>
+  
   <div class="buttons">
     <button id="authButton">Войти через Яндекс</button>
   </div>
-  <div id="logs"></div>
+  
+  <div id="logs">
+    <p>Здесь будет информация о статусе авторизации...</p>
+  </div>
+  
+  <div style="margin-top: 40px; padding: 20px; background: #f9f9f9; border-radius: 8px;">
+    <h3>Что происходит:</h3>
+    <ol>
+      <li>Нажимаете "Войти через Яндекс"</li>
+      <li>Вас перенаправляет на страницу авторизации Яндекса</li>
+      <li>Вы вводите логин/пароль и даете разрешения</li>
+      <li>Яндекс возвращает вас обратно с токеном</li>
+      <li>Токен сохраняется и используется для получения ваших данных</li>
+    </ol>
+  </div>
 </body>
 </html>
